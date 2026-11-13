@@ -1,11 +1,29 @@
-<div align="center">
+# Helios Studio
 
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
+Real-time GPU path tracing and interactive PBR lighting preview studio for 3D modeling workflows on iPad and desktop browsers.
 
-  <h1>Built with AI Studio</h2>
+## Features
 
-  <p>The fastest path from prompt to production with Gemini.</p>
+- **WebGL2 GPU Path Tracer**: Interactive BVH-accelerated Monte Carlo path tracer with progressive sample accumulation, joint-bilateral denoiser, ACES filmic tone mapping, and multiple lighting environments (`Studio`, `Golden Hour`, `Architectural Loft`, `Cornell Box`, `Obsidian`).
+- **Live PBR & Split Comparison Modes**: Switch between real-time Three.js PBR viewport, progressive Ray Trace mode, and interactive Split wipe comparison.
+- **3D Studio Light Rig**: Up to 4 independent studio lights with azimuth/elevation/distance controls, soft area light radius, Kelvin color temperature or custom hex tint, and 3D transform gizmos.
+- **PBR Texture Maps & Custom Model Import**:
+  - Built-in procedural PBR material presets (`Brushed Grain`, `Carbon Weave`, `Vulcanite Grip`, `Guilloché Dial`, `Board Concrete`, `Cedar Timber`, `Honed Marble`) with Albedo, Tangent Normal, and Roughness maps.
+  - Import `.glb`, `.gltf`, `.obj`, and `.stl` models or upload custom PBR texture maps per surface, with automatic 3D UV seam feathering and atlas gutter dilation.
+- **iPad-Ready Touch Viewport**: Responsive touch orbit/dolly/pan gestures, tap-to-inspect materials and lights, camera presets, Clay shading mode, turntable preview, and PNG snapshot export.
 
-  <a href="https://aistudio.google.com/apps">Start building</a>
+## Local Development
 
-</div>
+```bash
+npm install
+npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Scripts
+
+- `npm run dev` — Start the Vite development server on port 3000
+- `npm run build` — Build the production bundle into `dist/`
+- `npm run preview` — Preview the production build locally
+- `npm run lint` — Type-check with TypeScript (`tsc --noEmit`)
