@@ -7,8 +7,8 @@
 - GitHub Pages deploys through `.github/workflows/pages.yml`.
 - Google AI Studio is no longer part of the development or publishing loop. The repository is the source of truth.
 - Release marker: 0.1.0.
-- GitHub Pages source is set to **GitHub Actions**. Latest custom workflow deployment: run 43543929514 succeeded.
-- Cris reported a blank page after the Pages source had fallen back to publishing the repository root. The source has been corrected; a fresh render confirmation is pending.
+- GitHub Pages source is set to **GitHub Actions**. Latest custom workflow deployment: run 43544116013 succeeded.
+- Cris reported a blank page after the Pages source had fallen back to publishing the repository root. The source was corrected, and Cris confirmed the refreshed live render displays correctly (**protected PASS**).
 
 ## Implemented in 0.1.0
 
