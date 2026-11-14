@@ -6,7 +6,7 @@
 - Live app: https://crisbezz.github.io/HeliosStudio/
 - GitHub Pages deploys through `.github/workflows/pages.yml`.
 - Google AI Studio is no longer part of the development or publishing loop. The repository is the source of truth.
-- Current release target: 0.1.3. Release 0.1.2 gallery scrolling is user-PASS protected; Pages remains on GitHub Actions.
+- Current published release: 0.1.3, runtime commit `44a7565e24ee96ea7907716dc67b1b97a810a63d`; GitHub Pages run `43570852359` succeeded, including locked install, type-check, build and deploy. Release 0.1.2 gallery scrolling is user-PASS protected.
 - BoxLab `.1162` scroll repair is also user-PASS protected. Its catalogue currently has the shared 20 presets from Helios `.1.1`; port the new `.1.3` architecture presets to BoxLab in a separate BoxLab build after this Helios release is accepted.
 - Cris reported a blank page after the Pages source had fallen back to publishing the repository root. The source was corrected, and Cris confirmed the refreshed live render displays correctly (**protected PASS**).
 

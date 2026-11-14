@@ -6,7 +6,7 @@
 - [ ] Scroll to the last card in portrait and landscape; confirm the preset panel remains scrollable and selection still closes the gallery.
 - [ ] Confirm presets affect only the selected render-session material and do not change the source project.
 
-Automated status for 0.1.3: `npm run lint` and `npm run build` pass locally; hosted Pages verification and touch/material acceptance are pending.
+Automated status for 0.1.3: local `npm run lint`/`npm run build` and Pages run `43570852359` pass. Hands-on touch/material acceptance is pending.
 
 ## Release 0.1.2 — material gallery scroll repair — protected PASS
 

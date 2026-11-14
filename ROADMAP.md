@@ -3,7 +3,7 @@
 ## Current
 
 - Release 0.1.2 gallery scroll is user-PASS protected in Helios; BoxLab `.1162` scroll is also user-PASS protected.
-- Release 0.1.3 adds eight architecture-ready material options and six dedicated procedural PBR texture families using the existing texture-array owner. Local type-check/build pass; hosted and hands-on acceptance are pending.
+- Release 0.1.3 adds eight architecture-ready material options and six dedicated procedural PBR texture families using the existing texture-array owner. Local type-check/build and Pages run `43570852359` pass; hands-on material acceptance is pending.
 
 - Repository-owned development and GitHub Pages publishing.
 - GitHub Pages publishing source corrected to GitHub Actions; refreshed live render confirmed by Cris.

@@ -3,7 +3,7 @@
 - Built on the protected 0.1.2 gallery-scroll PASS. Added Warm Limestone, Red Clay Brick, Spotted Gum, Terrazzo, Glazed Ceramic Tile, Lime Plaster, Weathered Corten Steel, and Polished Concrete, bringing the gallery from twenty to twenty-eight choices.
 - Extended the existing procedural PBR texture-array owner with six map families (limestone, running-bond brick, terrazzo aggregate, glazed tile, plaster, and weathered steel) and six additional layers; Spotted Gum and Polished Concrete reuse existing grain families with distinct color/scale/roughness responses.
 - Added matching sphere-preview patterns to the existing SVG preview helper. Presets still target only the selected Helios render-session material; BoxLab project data is untouched.
-- Release target 0.1.3. `npm run lint` and `npm run build` pass locally; hosted Pages verification and hands-on material acceptance are pending. BoxLab `.1162` PASS and Helios `.1.2` PASS remain protected; port these accepted materials to BoxLab in a later build.
+- Release 0.1.3 runtime commit `44a7565e24ee96ea7907716dc67b1b97a810a63d`; local `npm run lint`/`npm run build` and hosted Pages run `43570852359` pass. Hands-on material acceptance is pending. BoxLab `.1162` PASS and Helios `.1.2` PASS remain protected; port these accepted materials to BoxLab in a later build.
 
 ## 2026-11-14 — Release 0.1.2 material gallery scrolling — protected PASS
 
