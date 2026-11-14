@@ -3,6 +3,7 @@
 ## Current
 
 - Repository-owned development and GitHub Pages publishing.
+- GitHub Pages publishing source corrected to GitHub Actions; refreshed live render confirmed by Cris.
 - 512 spp render quality option.
 - Reset controls for selected lighting and material properties.
 
