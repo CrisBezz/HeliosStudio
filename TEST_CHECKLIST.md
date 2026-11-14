@@ -1,3 +1,17 @@
+## Release 0.1.2 — material gallery scroll repair
+
+- [ ] On iPad portrait, open Materials > preset grid and scroll to the final row without closing the menu.
+- [ ] Repeat in landscape and confirm the material panel scrolls smoothly while the viewport remains usable outside the dock.
+- [ ] Apply a lower-row preset; confirm it applies to the selected surface and the gallery closes.
+- [ ] Confirm the scrollable area includes all twenty cards and retains their preview and label.
+
+Automated status for 0.1.2: `npm run lint` and `npm run build` pass locally; GitHub Pages publication and iPad touch acceptance are pending.
+
+## Release 0.1.1 — user partial acceptance
+
+- [x] **Protected PASS:** Cris says the expanded material choices and previews look great.
+- [x] **Resolved FAIL:** The material gallery was trapped in a menu that did not scroll; 0.1.2 makes the parent material panel the sole touch scroll owner.
+
 # Hands-on Test Checklist
 
 ## Release 0.1.1 — material preset gallery

@@ -1,3 +1,10 @@
+## 2026-11-14 — Release 0.1.2 material gallery scrolling
+
+- Cris accepted the new materials and their previews, but reported that the preset menu did not scroll. Record the catalogue/previews as a protected partial PASS and the gallery scroll as the failing behavior.
+- Removed the nested grid scroller and let the expanded Materials panel own vertical scrolling. Its height adapts while the preset gallery is open and enables native touch momentum.
+- BoxLab `.1161` already contains the exact same twenty-preset catalog and shared SVG preview helper as Helios Studio `.1.1` (source files byte-match); no duplicate BoxLab material implementation was added. Cris's `.1161 PASS` is recorded in BoxLab.
+- Release target 0.1.2. `npm run lint` (TypeScript check) and `npm run build` pass locally. GitHub Pages publication and device scroll acceptance remain pending.
+
 # Development History
 
 ## 2026-11-14 — Release 0.1.1 material gallery

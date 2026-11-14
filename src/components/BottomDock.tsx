@@ -208,7 +208,16 @@ export const BottomDock: React.FC<BottomDockProps> = ({
           </div>
 
           {/* Active Tab Panel */}
-          <div className="p-3.5 md:p-4 max-h-[268px] overflow-y-auto">
+          <div
+            className="p-3.5 md:p-4 overflow-y-auto overscroll-contain touch-pan-y"
+            style={{
+              maxHeight:
+                activeTab === 'materials' && materialPresetsOpen
+                  ? 'min(60dvh, 440px)'
+                  : '268px',
+              WebkitOverflowScrolling: 'touch',
+            }}
+          >
             {activeTab === 'projects' && (
               <div className="space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
@@ -489,7 +498,7 @@ export const BottomDock: React.FC<BottomDockProps> = ({
                       <span className="text-[11px] font-medium text-[#C4C9D0]">Material presets</span>
                       <span className="text-[10px] text-[#858B94] truncate">Applied to {activeMaterial.name} in this render session</span>
                     </div>
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 max-h-[38dvh] overflow-y-auto overscroll-contain pr-1">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 pr-1">
                       {MATERIAL_PRESETS.map((preset) => (
                         <button
                           key={preset.id}
