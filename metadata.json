@@ -1,8 +1,0 @@
-{
-  "name": "Helios Studio",
-  "description": "Real-time GPU ray tracing and interactive lighting preview studio for 3D modelling projects on iPad and desktop.",
-  "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
-}

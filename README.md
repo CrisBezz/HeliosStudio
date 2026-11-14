@@ -1,5 +1,7 @@
 # Helios Studio
 
+**Live app:** [https://crisbezz.github.io/HeliosStudio/](https://crisbezz.github.io/HeliosStudio/)
+
 Real-time GPU path tracing and interactive PBR lighting preview studio for 3D modeling workflows on iPad and desktop browsers.
 
 ## Features
@@ -20,6 +22,10 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+Helios Studio is built and published from this repository. Pushes to `main` run
+the GitHub Actions Pages workflow; local development and `npm run build` use `/`,
+while the Pages workflow builds with `/HeliosStudio/` as the asset base.
 
 ## Scripts
 

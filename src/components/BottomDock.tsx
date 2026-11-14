@@ -684,6 +684,7 @@ export const BottomDock: React.FC<BottomDockProps> = ({
                       <option value={64}>64 spp</option>
                       <option value={128}>128 spp</option>
                       <option value={256}>256 spp</option>
+                      <option value={512}>512 spp</option>
                     </select>
                   </div>
                 </div>
