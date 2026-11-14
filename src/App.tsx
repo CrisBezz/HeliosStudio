@@ -30,6 +30,7 @@ export default function App() {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const textureInputRef = useRef<HTMLInputElement | null>(null);
   const pendingTexUploadRef = useRef<{ materialId: string; slot: TextureSlot } | null>(null);
+  const materialDefaultsRef = useRef<Map<string, MaterialSpec>>(new Map());
 
   const [renderMode, setRenderMode] = useState<RenderMode>('raytrace');
   const [splitRatio, setSplitRatio] = useState<number>(0.5);
@@ -98,6 +99,7 @@ export default function App() {
     engineRef.current = engine;
     const initialMats = engine.getMaterials();
     setMaterials(initialMats);
+    materialDefaultsRef.current = new Map(initialMats.map((mat) => [mat.id, { ...mat }]));
     if (initialMats.length > 0) {
       setSelectedMaterialId(initialMats[0].id);
     }
@@ -143,6 +145,7 @@ export default function App() {
     setActiveProjectId(id);
     setCustomProjectName(null);
     setMaterials(mats);
+    materialDefaultsRef.current = new Map(mats.map((mat) => [mat.id, { ...mat }]));
     setSelectedMaterialId(mats[0]?.id ?? '');
     setSelectedPartName(null);
   };
@@ -154,6 +157,7 @@ export default function App() {
       setActiveProjectId('custom');
       setCustomProjectName(file.name);
       setMaterials(mats);
+      materialDefaultsRef.current = new Map(mats.map((mat) => [mat.id, { ...mat }]));
       setSelectedMaterialId(mats[0]?.id ?? '');
       setSelectedPartName(null);
       showNotice(`Loaded ${file.name}`);
@@ -173,6 +177,11 @@ export default function App() {
       engineRef.current?.syncLights(next);
       return next;
     });
+  };
+
+  const handleResetLight = (id: string) => {
+    const defaults = DEFAULT_LIGHTS.find((light) => light.id === id);
+    if (defaults) handleUpdateLight(id, { ...defaults });
   };
 
   const handleApplyLightingRig = (rig: LightingRigPreset) => {
@@ -196,6 +205,29 @@ export default function App() {
       const next = prev.map((m) => (m.id === id ? { ...m, ...patch } : m));
       engineRef.current?.updateMaterials(next);
       return next;
+    });
+  };
+
+  const handleResetMaterial = (id: string) => {
+    const defaults = materialDefaultsRef.current.get(id);
+    const current = materials.find((material) => material.id === id);
+    if (!defaults || !current) return;
+
+    handleUpdateMaterial(id, {
+      color: defaults.color,
+      roughness: defaults.roughness,
+      metalness: defaults.metalness,
+      ior: defaults.ior,
+      transmission: defaults.transmission,
+      clearcoat: defaults.clearcoat,
+      emissiveIntensity: defaults.emissiveIntensity,
+      texturePreset: defaults.texturePreset,
+      uvScale: defaults.uvScale,
+      normalStrength: defaults.normalStrength,
+      // Uploaded texture images are user assets, so reset their active slots separately.
+      hasCustomAlbedo: current.hasCustomAlbedo,
+      hasCustomNormal: current.hasCustomNormal,
+      hasCustomRoughness: current.hasCustomRoughness,
     });
   };
 
@@ -360,6 +392,7 @@ export default function App() {
         selectedLightId={selectedLightId}
         onSelectLight={handleSelectLight}
         onUpdateLight={handleUpdateLight}
+        onResetLight={handleResetLight}
         onApplyLightingRig={handleApplyLightingRig}
         materials={materials}
         selectedMaterialId={selectedMaterialId}
@@ -369,6 +402,7 @@ export default function App() {
           setSelectedPartName(null);
         }}
         onUpdateMaterial={handleUpdateMaterial}
+        onResetMaterial={handleResetMaterial}
         onApplyMaterialPreset={handleApplyMaterialPreset}
         onUploadTextureClick={handleUploadTextureClick}
         settings={settings}

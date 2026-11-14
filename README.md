@@ -1,5 +1,7 @@
 # Helios Studio
 
+**Release:** 0.1.0
+
 **Live app:** [https://crisbezz.github.io/HeliosStudio/](https://crisbezz.github.io/HeliosStudio/)
 
 Real-time GPU path tracing and interactive PBR lighting preview studio for 3D modeling workflows on iPad and desktop browsers.

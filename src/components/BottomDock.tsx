@@ -8,6 +8,7 @@ import {
   ImagePlus,
   Layers,
   RotateCw,
+  RotateCcw,
   Sliders,
   Sparkles,
   Sun,
@@ -53,6 +54,7 @@ interface BottomDockProps {
   selectedLightId: string;
   onSelectLight: (id: string) => void;
   onUpdateLight: (id: string, patch: Partial<StudioLight>) => void;
+  onResetLight: (id: string) => void;
   onApplyLightingRig: (preset: LightingRigPreset) => void;
 
   // Materials
@@ -61,6 +63,7 @@ interface BottomDockProps {
   selectedPartName: string | null;
   onSelectMaterial: (id: string) => void;
   onUpdateMaterial: (id: string, patch: Partial<MaterialSpec>) => void;
+  onResetMaterial: (id: string) => void;
   onApplyMaterialPreset: (id: string, preset: MaterialPreset) => void;
   onUploadTextureClick: (materialId: string, slot: TextureSlot) => void;
 
@@ -108,12 +111,14 @@ export const BottomDock: React.FC<BottomDockProps> = ({
   selectedLightId,
   onSelectLight,
   onUpdateLight,
+  onResetLight,
   onApplyLightingRig,
   materials,
   selectedMaterialId,
   selectedPartName,
   onSelectMaterial,
   onUpdateMaterial,
+  onResetMaterial,
   onApplyMaterialPreset,
   onUploadTextureClick,
   settings,
@@ -318,6 +323,16 @@ export const BottomDock: React.FC<BottomDockProps> = ({
 
                     <button
                       type="button"
+                      onClick={() => onResetLight(activeLight.id)}
+                      title={`Reset ${activeLight.name} to default`}
+                      aria-label={`Reset ${activeLight.name} to default`}
+                      className="min-w-11 min-h-11 rounded-xl border border-white/[0.08] bg-[#181B20] text-[#9BA1A6] hover:text-[#F59E0B] hover:border-[#F59E0B]/50 flex items-center justify-center cursor-pointer transition-colors"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                    </button>
+
+                    <button
+                      type="button"
                       onClick={() =>
                         onUpdateSettings({ showLightGizmos: !settings.showLightGizmos })
                       }
@@ -433,11 +448,22 @@ export const BottomDock: React.FC<BottomDockProps> = ({
                     })}
                   </div>
 
-                  {selectedPartName && (
-                    <span className="text-[11px] text-[#9BA1A6] truncate max-w-[200px]">
-                      Picked: <strong className="text-[#F4F4F6] font-medium">{selectedPartName}</strong>
-                    </span>
-                  )}
+                  <div className="flex items-center gap-2 shrink-0">
+                    {selectedPartName && (
+                      <span className="text-[11px] text-[#9BA1A6] truncate max-w-[200px]">
+                        Picked: <strong className="text-[#F4F4F6] font-medium">{selectedPartName}</strong>
+                      </span>
+                    )}
+                    <button
+                      type="button"
+                      onClick={() => onResetMaterial(activeMaterial.id)}
+                      title={`Reset ${activeMaterial.name} properties to defaults`}
+                      aria-label={`Reset ${activeMaterial.name} properties to defaults`}
+                      className="min-w-11 min-h-11 rounded-xl border border-white/[0.08] bg-[#181B20] text-[#9BA1A6] hover:text-[#F59E0B] hover:border-[#F59E0B]/50 flex items-center justify-center cursor-pointer transition-colors"
+                    >
+                      <RotateCcw className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
 
                 {/* Material Sliders */}
