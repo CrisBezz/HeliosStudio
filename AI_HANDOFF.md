@@ -6,8 +6,8 @@
 - Live app: https://crisbezz.github.io/HeliosStudio/
 - GitHub Pages deploys through `.github/workflows/pages.yml`.
 - Google AI Studio is no longer part of the development or publishing loop. The repository is the source of truth.
-- Release marker: 0.1.1.
-- GitHub Pages source is set to **GitHub Actions**. Latest custom workflow deployment: run 43544116013 succeeded.
+- Release marker: 0.1.1 (main `33fd410`, workflow run `43555341723` succeeded).
+- GitHub Pages source is set to **GitHub Actions**. Latest material-gallery workflow deployment: run 43555341723 succeeded.
 - Cris reported a blank page after the Pages source had fallen back to publishing the repository root. The source was corrected, and Cris confirmed the refreshed live render displays correctly (**protected PASS**).
 
 ## Implemented

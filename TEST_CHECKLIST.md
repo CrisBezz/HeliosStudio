@@ -8,7 +8,7 @@
 - [ ] Confirm the gallery is scrollable and its cards remain tappable on iPad portrait and landscape.
 - [ ] Confirm these are render-session settings and do not modify BoxLab's source project or mesh.
 
-Automated status for 0.1.1: `npm run lint` (TypeScript check) and `npm run build` both pass. GitHub Pages publication and user device acceptance remain pending.
+Automated status for 0.1.1: `npm run lint` (TypeScript check) and `npm run build` both pass. Pages workflow run `43555341723` succeeded; user device acceptance remains pending.
 
 ## Release 0.1.0 — protected acceptance and remaining controls
 

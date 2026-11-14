@@ -5,7 +5,7 @@
 - Added twelve distinct physical material choices to the existing eight presets: brushed aluminum, warm copper, black oxide steel, pearl enamel, matte polymer, walnut wood, black leather, cast concrete, polished marble, frosted glass, emerald glass, and soft rubber. New selections reuse the existing PBR material fields and procedural texture layers; no parallel shading or texture kernel was added.
 - Replaced the horizontal preset strip with a grid-opening icon and a scrollable card gallery. Each card uses a lightweight SVG sphere preview parameterized by the preset's base color, texture family, roughness, metalness, transmission and coat.
 - Presets continue to update only the currently selected material surface in Helios' render-session state.
-- Release markers updated to 0.1.1. `npm run lint` and `npm run build` pass. Pages publication and user device acceptance are pending; see TEST_CHECKLIST.
+- Release markers updated to 0.1.1. `npm run lint` and `npm run build` pass. Pages workflow run `43555341723` succeeded. A first upload of the large `BottomDock.tsx` source was truncated by the GitHub transfer and failed the hosted type-check; the complete source blob was reapplied and the corrected build/deployment succeeded. User device acceptance is pending; see TEST_CHECKLIST.
 
 ## 2026-11-14 — Release 0.1.0
 
