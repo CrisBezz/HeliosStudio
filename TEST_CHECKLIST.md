@@ -5,7 +5,7 @@
 - [ ] Apply a lower-row preset; confirm it applies to the selected surface and the gallery closes.
 - [ ] Confirm the scrollable area includes all twenty cards and retains their preview and label.
 
-Automated status for 0.1.2: `npm run lint` and `npm run build` pass locally; GitHub Pages publication and iPad touch acceptance are pending.
+Automated status for 0.1.2: `npm run lint` and `npm run build` pass locally; GitHub Pages run `43560460679` succeeded for commit `d323550`; iPad touch acceptance is pending.
 
 ## Release 0.1.1 — user partial acceptance
 

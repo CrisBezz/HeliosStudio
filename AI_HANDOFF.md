@@ -6,8 +6,8 @@
 - Live app: https://crisbezz.github.io/HeliosStudio/
 - GitHub Pages deploys through `.github/workflows/pages.yml`.
 - Google AI Studio is no longer part of the development or publishing loop. The repository is the source of truth.
-- Release target: 0.1.2; source main was `0485ff1` before the scroll fix. `npm run lint` and `npm run build` pass locally; Pages publication and Cris’s touch acceptance remain pending.
-- GitHub Pages source is set to **GitHub Actions**; the latest published gallery build is 0.1.1.
+- Release target: 0.1.2; source main was `0485ff1` before the scroll fix. `npm run lint` and `npm run build` pass locally; GitHub Pages run `43560460679` succeeded for commit `d323550`. Cris’s iPad touch acceptance remains pending.
+- GitHub Pages source is set to **GitHub Actions**; the latest published gallery build is 0.1.2.
 - Cris reported a blank page after the Pages source had fallen back to publishing the repository root. The source was corrected, and Cris confirmed the refreshed live render displays correctly (**protected PASS**).
 
 ## Implemented

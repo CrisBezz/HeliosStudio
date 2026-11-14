@@ -2,7 +2,7 @@
 
 ## Current
 
-- Release 0.1.2 repairs scrolling in the material preset gallery after Cris accepted the catalogue/previews and reported that the menu would not scroll. The expanded material panel now owns vertical touch scrolling.
+- Release 0.1.2 repairs scrolling in the material preset gallery after Cris accepted the catalogue/previews and reported that the menu would not scroll. The expanded material panel now owns vertical touch scrolling. GitHub Pages run `43560460679` succeeded for commit `d323550`; iPad touch acceptance is pending.
 
 - Repository-owned development and GitHub Pages publishing.
 - GitHub Pages publishing source corrected to GitHub Actions; refreshed live render confirmed by Cris.
