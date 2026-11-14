@@ -1,6 +1,6 @@
 # Helios Studio
 
-**Release:** 0.1.2
+**Release:** 0.1.3
 
 **Live app:** [https://crisbezz.github.io/HeliosStudio/](https://crisbezz.github.io/HeliosStudio/)
 
@@ -13,7 +13,7 @@ Real-time GPU path tracing and interactive PBR lighting preview studio for 3D mo
 - **3D Studio Light Rig**: Up to 4 independent studio lights with azimuth/elevation/distance controls, soft area light radius, Kelvin color temperature or custom hex tint, and 3D transform gizmos.
 - **PBR Texture Maps & Custom Model Import**:
   - Built-in procedural PBR material presets (`Brushed Grain`, `Carbon Weave`, `Vulcanite Grip`, `Guilloché Dial`, `Board Concrete`, `Cedar Timber`, `Honed Marble`) with Albedo, Tangent Normal, and Roughness maps.
-  - Twenty physical material presets, including metals, enamel, polymers, wood, leather, concrete, marble, glass, and rubber, shown in a graphical preview grid.
+  - Twenty-eight physical material presets, including metals, glass, woods, stone, brick, terrazzo, ceramic tile, plaster, concrete, and weathered steel, shown in a graphical preview grid.
   - Import `.glb`, `.gltf`, `.obj`, and `.stl` models or upload custom PBR texture maps per surface, with automatic 3D UV seam feathering and atlas gutter dilation.
 - **iPad-Ready Touch Viewport**: Responsive touch orbit/dolly/pan gestures, tap-to-inspect materials and lights, camera presets, Clay shading mode, turntable preview, and PNG snapshot export.
 
