@@ -1,10 +1,9 @@
 # Hands-on Test Checklist
 
-## Release 0.1.0 — pending user review
+## Release 0.1.0 — active review
 
 - [x] **Protected PASS:** User confirmed the live Helios Studio render view appears.
-- **Recorded FAIL:** A later deployment showed a blank page while Pages was publishing main / repository root.
-- **Correction:** Pages is now set to GitHub Actions; run 43543929514 completed successfully from the production build. Recheck the live render after refreshing.
+- [x] **Resolved FAIL:** A later deployment showed a blank page while Pages was publishing main / repository root. Pages is now set to GitHub Actions; run 43544116013 completed successfully, and Cris confirmed the refreshed live render displays (**protected PASS**).
 - [ ] In Lights, change a light value, tap its circular-arrow control, and confirm that light returns to its default values.
 - [ ] Apply a lighting rig, then reset the selected light and confirm the other lights remain as set.
 - [ ] In Materials, change Albedo, Roughness, and Metalness, then reset and confirm the loaded material values return.
