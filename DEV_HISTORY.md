@@ -1,5 +1,12 @@
 # Development History
 
+## 2026-11-14 — Release 0.1.1 material gallery
+
+- Added twelve distinct physical material choices to the existing eight presets: brushed aluminum, warm copper, black oxide steel, pearl enamel, matte polymer, walnut wood, black leather, cast concrete, polished marble, frosted glass, emerald glass, and soft rubber. New selections reuse the existing PBR material fields and procedural texture layers; no parallel shading or texture kernel was added.
+- Replaced the horizontal preset strip with a grid-opening icon and a scrollable card gallery. Each card uses a lightweight SVG sphere preview parameterized by the preset's base color, texture family, roughness, metalness, transmission and coat.
+- Presets continue to update only the currently selected material surface in Helios' render-session state.
+- Release markers updated to 0.1.1. `npm run lint` and `npm run build` pass. Pages publication and user device acceptance are pending; see TEST_CHECKLIST.
+
 ## 2026-11-14 — Release 0.1.0
 
 - Took repository-owned control of Helios Studio and published through GitHub Pages at https://crisbezz.github.io/HeliosStudio/.

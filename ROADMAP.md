@@ -6,10 +6,11 @@
 - GitHub Pages publishing source corrected to GitHub Actions; refreshed live render confirmed by Cris.
 - 512 spp render quality option.
 - Reset controls for selected lighting and material properties.
+- Twenty graphical material presets presented in a grid and applied to the selected surface for the current render session.
 
 ## Next builds
 
-1. Add graphical previews for the current material presets so their appearance can be compared before application.
-2. Expand the preset-material catalogue after preview presentation is in place.
-3. Continue validating standalone Helios lighting and material controls before integrating agreed changes into BoxLab.
+1. Validate the material gallery and render-only behavior on desktop and iPad.
+2. Continue adding materials only when a distinct PBR appearance or procedural texture is supported.
+3. Port the approved material catalogue and gallery into BoxLab's existing Helios adapter.
 4. Keep clean render output without interface as a BoxLab-specific feature.
