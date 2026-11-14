@@ -8,4 +8,5 @@
 - User confirmed that the published render view displays correctly.
 - The GitHub Actions production build and deployment completed successfully.
 - After the reset-controls deployment, Cris reported that the page was blank. The repository's Pages source had reverted to main / root, so GitHub's branch publisher served the unbuilt source tree.
-- Restored **GitHub Actions** as the Pages source and manually ran the custom build-and-deploy workflow (run 43543929514); the build and deployment succeeded. Fresh render confirmation is pending.
+- Restored **GitHub Actions** as the Pages source and ran the custom build-and-deploy workflow (run 43544116013); the build and deployment succeeded.
+- Cris confirmed the refreshed live render displays correctly after the publishing correction. Recorded as a protected PASS; the blank-page failure is resolved.
