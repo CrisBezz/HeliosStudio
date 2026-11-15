@@ -4,7 +4,7 @@
 - Added per-material UV scale U/V, offset U/V and rotation and applied the same transform in the existing Three.js PBR and GPU path-tracing owners. Three.js map caching now keys by map and transform and is cleared when mapping changes, avoiding shared texture-transform bleed between materials.
 - Exposed emission intensity and emitter opacity. The ray tracer weights emitted radiance by opacity and continues remaining throughput through the transparent emitter; the Three.js view uses the same opacity.
 - Clarified that current height relief is normal-map shading rather than geometric displacement; no mesh silhouette displacement was added.
-- Updated package/README release markers to 0.1.4. Type-check/build are owned by the Pages workflow; record its final result and user's manual acceptance in TEST_CHECKLIST.
+- Updated package/README release markers to 0.1.4. The first hosted type-check caught missing preview-prop wiring; fixed it in follow-up commit `0e79c5163e5d87703d369250e1a9fff9e2b9085f`. Final Pages workflow `43663848502` passed type-check, production build and deploy. iPad/manual acceptance is pending in TEST_CHECKLIST.
 
 ## 2026-11-15 — Release 0.1.3 protected PASS
 

@@ -5,7 +5,8 @@
 - Repository: `CrisBezz/HeliosStudio`, branch `main`.
 - Live app: https://crisbezz.github.io/HeliosStudio/
 - GitHub Pages workflow: `.github/workflows/pages.yml`; dependency pins remain in `bun.lock`.
-- Current release target: 0.1.4. Runtime controls extend the existing `BottomDock`, `StudioEngine`, `PbrTextureManager` and `GPUPathTracer`; no renderer or material kernel was added.
+- Current published release: 0.1.4, runtime commit `0e79c5163e5d87703d369250e1a9fff9e2b9085f`; Pages workflow run `43663848502` passed type-check, build and deploy. Runtime base commit: `f0877f10125ff7e58103ec97f16137c5e972a4a9`.
+- Release 0.1.4 extends the existing `BottomDock`, `StudioEngine`, `PbrTextureManager` and `GPUPathTracer`; no renderer or material kernel was added.
 - Helios Studio 0.1.3's 28 material presets and scrolling gallery are PASS protected. BoxLab .1164 menu styling is separately protected; this build changes standalone Helios Studio only.
 
 ## 0.1.4 material mapping controls
@@ -28,5 +29,5 @@
 
 ## Validation and next step
 
-Repository CI runs `bun run lint` and `bun run build` before Pages deployment. Record the final workflow run and Cris's hands-on result in `TEST_CHECKLIST.md`. See the .1.4 checklist for touch, transform, preview, reset and emitter-opacity checks. True geometric displacement, AO/height asset channels and per-channel blend controls remain future candidates.
+Repository CI run `43663848502` passed `bun run lint`, `bun run build`, and Pages deployment. Cris's hands-on result is pending; record it in `TEST_CHECKLIST.md`. See the .1.4 checklist for touch, transform, preview, reset and emitter-opacity checks. True geometric displacement, AO/height asset channels and per-channel blend controls remain future candidates.
 

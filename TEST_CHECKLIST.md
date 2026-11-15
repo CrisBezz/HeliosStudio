@@ -8,7 +8,7 @@
 - [ ] Reset mapping, then reset the material; confirm transforms return to their preset defaults and uploaded map assets remain available.
 - [ ] Repeat the material-panel interactions in iPad portrait and landscape and confirm the dock remains scrollable and controls stay tappable.
 
-Automated status for 0.1.4: awaiting the hosted type-check and production build for this commit. Record the Pages workflow result before accepting the release.
+Automated status for 0.1.4: Pages workflow `43663848502` passed type-check, production build and deploy. Cris's hands-on device acceptance is pending.
 
 ## Release 0.1.3 — architectural material library — protected PASS
 
