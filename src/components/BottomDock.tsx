@@ -68,6 +68,7 @@ interface BottomDockProps {
   onResetMaterial: (id: string) => void;
   onApplyMaterialPreset: (id: string, preset: MaterialPreset) => void;
   onUploadTextureClick: (materialId: string, slot: TextureSlot) => void;
+  getTexturePreview: (materialId: string, slot: TextureSlot) => string | null;
 
   // Ray Tracer Settings
   settings: RayTracerSettings;
@@ -123,6 +124,7 @@ export const BottomDock: React.FC<BottomDockProps> = ({
   onResetMaterial,
   onApplyMaterialPreset,
   onUploadTextureClick,
+  getTexturePreview,
   settings,
   onUpdateSettings,
   onRestartTrace,

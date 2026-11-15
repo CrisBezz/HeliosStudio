@@ -532,6 +532,14 @@ export class StudioEngine {
     return this.materials;
   }
 
+  public getMaterialMapPreview(materialId: string, slot: TextureSlot): string | null {
+    const material = this.materials.find((item) => item.id === materialId);
+    const layer = this.materialLayerMap.get(materialId)
+      ?? PRESET_TO_LAYER[material?.texturePreset ?? 'none']
+      ?? 0;
+    return this.textureManager.getMapPreviewDataUrl(layer, slot);
+  }
+
   public loadBuiltinProject(id: BuiltinProjectId): MaterialSpec[] {
     this.textureManager.resetCustomCounter();
     this.materialLayerMap.clear();
