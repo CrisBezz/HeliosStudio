@@ -1,3 +1,23 @@
+## Release 0.1.4 — texture mapping and emitter controls
+
+- [ ] In Materials, confirm the current albedo, normal and roughness maps each show a preview; change each map and confirm its preview updates.
+- [ ] Restore preset maps and confirm the selected material's procedural maps return.
+- [ ] Change U/V scale, U/V offset and rotation separately; confirm each transform changes the ray-traced render and the Three.js PBR view, and does not alter another material using the same preset.
+- [ ] Adjust normal / height-relief strength and confirm surface shading changes without mesh silhouette changes.
+- [ ] Raise emission, lower emitter opacity, and confirm the glowing surface becomes translucent in the render; compare the PBR preview.
+- [ ] Reset mapping, then reset the material; confirm transforms return to their preset defaults and uploaded map assets remain available.
+- [ ] Repeat the material-panel interactions in iPad portrait and landscape and confirm the dock remains scrollable and controls stay tappable.
+
+Automated status for 0.1.4: awaiting the hosted type-check and production build for this commit. Record the Pages workflow result before accepting the release.
+
+## Release 0.1.3 — architectural material library — protected PASS
+
+- [x] All twenty-eight labeled cards and eight architectural presets are present.
+- [x] Preset materials update the selected render-session surface with visible texture and preview.
+- [x] Texture patterns and preset-gallery scrolling work in portrait and landscape.
+- [x] Presets do not modify the source project or mesh.
+- Automated: local lint/build and Pages run `43570852359` passed. Cris confirmed 0.1.3 PASS.
+
 ## Release 0.1.3 — architectural material library
 
 - [ ] In Materials, open the preset grid and confirm all twenty-eight labeled preview cards are present, including the eight new architectural presets.

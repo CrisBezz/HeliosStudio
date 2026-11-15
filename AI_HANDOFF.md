@@ -4,32 +4,29 @@
 
 - Repository: `CrisBezz/HeliosStudio`, branch `main`.
 - Live app: https://crisbezz.github.io/HeliosStudio/
-- GitHub Pages deploys through `.github/workflows/pages.yml`.
-- Google AI Studio is no longer part of the development or publishing loop. The repository is the source of truth.
-- Current published release: 0.1.3, runtime commit `44a7565e24ee96ea7907716dc67b1b97a810a63d`; GitHub Pages run `43570852359` succeeded, including locked install, type-check, build and deploy. Release 0.1.2 gallery scrolling is user-PASS protected.
-- BoxLab `.1162` scroll repair is also user-PASS protected. Its catalogue currently has the shared 20 presets from Helios `.1.1`; port the new `.1.3` architecture presets to BoxLab in a separate BoxLab build after this Helios release is accepted.
-- Cris reported a blank page after the Pages source had fallen back to publishing the repository root. The source was corrected, and Cris confirmed the refreshed live render displays correctly (**protected PASS**).
+- GitHub Pages workflow: `.github/workflows/pages.yml`; dependency pins remain in `bun.lock`.
+- Current release target: 0.1.4. Runtime controls extend the existing `BottomDock`, `StudioEngine`, `PbrTextureManager` and `GPUPathTracer`; no renderer or material kernel was added.
+- Helios Studio 0.1.3's 28 material presets and scrolling gallery are PASS protected. BoxLab .1164 menu styling is separately protected; this build changes standalone Helios Studio only.
 
-## Implemented
+## 0.1.4 material mapping controls
 
-- Added the 512 spp render quality option.
-- Added circular reset controls for the selected light and selected material.
-- Light reset restores the matching `DEFAULT_LIGHTS` entry.
-- Material reset restores the loaded project's initial scalar and procedural material properties while retaining uploaded texture-map assets.
-- Added repository-owned GitHub Pages build and deployment configuration.
-- Added twelve additional physical material presets, bringing the catalogue to twenty.
-- Replaced the inline preset strip with a touch-friendly grid opened by a presets icon; sphere thumbnails preview color, surface texture, roughness, metalness, transmission, and coat characteristics. Cris accepted the new materials and previews, then reported the gallery did not scroll.
-- Release 0.1.2 makes the expanded material panel the single vertical scroll owner on touch devices; the nested gallery scroller was removed.
-- Release 0.1.3 adds eight architectural presets and six dedicated procedural PBR texture families to the existing texture-array owner. The gallery and previews remain in the existing preset UI.
-- Preset selection applies to the currently selected material surface in the Helios render session. BoxLab project and mesh data remain outside Helios ownership.
+- The Material tab now shows cached previews for the active albedo, normal and roughness maps. Each slot can be replaced with an uploaded image, and uploaded maps can be reverted to the selected procedural preset.
+- UV mapping now supports separate U/V scale, U/V offset and rotation. The same transform is applied in the path tracer and Three.js PBR preview; map textures are cached per transform so one material cannot alter another material's mapping.
+- Normal strength is clearly exposed as normal/height-relief strength. Current procedural height detail is baked into normal maps; it changes shading but does not displace ray geometry or alter the silhouette.
+- Emission intensity is exposed. Emitter opacity lets rays continue through partly transparent glowing surfaces, with the PBR preview reflecting the same opacity.
+- Reset mapping returns to the material preset's tile scale and zero offset/rotation. Full material reset preserves uploaded map assets, consistent with earlier ownership.
 
-## Current architectural owners
+## Current owners
 
-- UI and application state: `src/App.tsx` and `src/components/BottomDock.tsx`.
+- UI/application state: `src/App.tsx`, `src/components/BottomDock.tsx`.
 - Built-in defaults and presets: `src/data/presets.ts`.
-- Three.js scene and path tracing: `src/engine/StudioEngine.ts` and `src/engine/pathTracer.ts`.
-- Dependency resolution is pinned by `bun.lock`.
+- Texture arrays, procedural maps and preview generation: `src/engine/textures.ts`.
+- Three.js PBR materials and UV matrix: `src/engine/models.ts`.
+- Scene/update and imported maps: `src/engine/StudioEngine.ts`.
+- Path tracing and per-material UV/emitter uniforms: `src/engine/pathTracer.ts`.
+- Do not add a second renderer or a separate map-control owner.
 
-## Next
+## Validation and next step
 
-Cris to verify the eight new architectural finishes and gallery scrolling through all twenty-eight cards. Then port the accepted catalog and texture families to BoxLab while preserving its project/material boundary. Clean render export remains BoxLab-specific.
+Repository CI runs `bun run lint` and `bun run build` before Pages deployment. Record the final workflow run and Cris's hands-on result in `TEST_CHECKLIST.md`. See the .1.4 checklist for touch, transform, preview, reset and emitter-opacity checks. True geometric displacement, AO/height asset channels and per-channel blend controls remain future candidates.
+

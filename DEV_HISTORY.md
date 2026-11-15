@@ -1,3 +1,15 @@
+## 2026-11-15 — Release 0.1.4 texture mapping and emitter controls
+
+- Extended Helios's existing material controls with cached previews for the active albedo, normal and roughness textures, per-slot replacement, and a restore-to-preset action.
+- Added per-material UV scale U/V, offset U/V and rotation and applied the same transform in the existing Three.js PBR and GPU path-tracing owners. Three.js map caching now keys by map and transform and is cleared when mapping changes, avoiding shared texture-transform bleed between materials.
+- Exposed emission intensity and emitter opacity. The ray tracer weights emitted radiance by opacity and continues remaining throughput through the transparent emitter; the Three.js view uses the same opacity.
+- Clarified that current height relief is normal-map shading rather than geometric displacement; no mesh silhouette displacement was added.
+- Updated package/README release markers to 0.1.4. Type-check/build are owned by the Pages workflow; record its final result and user's manual acceptance in TEST_CHECKLIST.
+
+## 2026-11-15 — Release 0.1.3 protected PASS
+
+Cris confirms Helios Studio 0.1.3 PASS. Protect the 28 material presets, architectural texture families, previews and scrollable gallery. Keep BoxLab's integrated Helios feature separately versioned.
+
 ## 2026-11-14 — Release 0.1.3 architectural material families
 
 - Built on the protected 0.1.2 gallery-scroll PASS. Added Warm Limestone, Red Clay Brick, Spotted Gum, Terrazzo, Glazed Ceramic Tile, Lime Plaster, Weathered Corten Steel, and Polished Concrete, bringing the gallery from twenty to twenty-eight choices.

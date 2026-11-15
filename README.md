@@ -1,6 +1,6 @@
 # Helios Studio
 
-**Release:** 0.1.3
+**Release:** 0.1.4
 
 **Live app:** [https://crisbezz.github.io/HeliosStudio/](https://crisbezz.github.io/HeliosStudio/)
 

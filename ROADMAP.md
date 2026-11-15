@@ -2,17 +2,15 @@
 
 ## Current
 
-- Release 0.1.2 gallery scroll is user-PASS protected in Helios; BoxLab `.1162` scroll is also user-PASS protected.
-- Release 0.1.3 adds eight architecture-ready material options and six dedicated procedural PBR texture families using the existing texture-array owner. Local type-check/build and Pages run `43570852359` pass; hands-on material acceptance is pending.
+- Helios Studio 0.1.3's twenty-eight material presets and scrollable gallery are user-PASS protected.
+- Release 0.1.4 adds live texture-map previews and replacement, UV offset/scale/rotation, normal relief strength and emitter-opacity control. It extends the existing texture manager and path tracer.
+- Current height relief is carried by tangent-space normal maps; ray geometry and silhouettes are unchanged.
+- Package and README markers are 0.1.4; `bun.lock` is unchanged because no dependencies were added.
 
-- Repository-owned development and GitHub Pages publishing.
-- GitHub Pages publishing source corrected to GitHub Actions; refreshed live render confirmed by Cris.
-- 512 spp render quality option.
-- Reset controls for selected lighting and material properties.
-- Twenty-eight graphical material presets presented in a grid and applied to the selected surface for the current render session.
+## Next-build ideas
 
-## Next builds
+1. After 0.1.4 acceptance, add a true height/displacement path. Compare UV-space parallax relief with tessellated/BVH displacement using a repeatable test scene and iPad memory/performance measurements before choosing an approach.
+2. Add optional ambient-occlusion and packed ORM map support with previews and channel selectors.
+3. Add per-map enable, strength and reset controls, and allow saving/reloading material setups in Helios without writing to BoxLab project data.
+4. Keep standalone Helios material ownership here; port accepted features to BoxLab in a separate BoxLab build when requested.
 
-1. Verify all eight new architectural presets and the final-row scroll on iPad portrait and landscape.
-2. After Helios 0.1.3 PASS, port its new preset records, procedural texture families and preview patterns to BoxLab's existing Helios adapter as a separate build.
-3. Keep clean render output without interface as a BoxLab-specific feature.

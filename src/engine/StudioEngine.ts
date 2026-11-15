@@ -597,13 +597,25 @@ export class StudioEngine {
   }
 
   public updateMaterials(materials: MaterialSpec[]) {
+    let threeMapsChanged = false;
     for (const spec of materials) {
       const prev = this.materials.find((m) => m.id === spec.id);
+      if (!prev
+        || prev.texturePreset !== spec.texturePreset
+        || prev.uvScale !== spec.uvScale
+        || prev.uvScaleX !== spec.uvScaleX
+        || prev.uvScaleY !== spec.uvScaleY
+        || prev.uvOffsetX !== spec.uvOffsetX
+        || prev.uvOffsetY !== spec.uvOffsetY
+        || prev.uvRotation !== spec.uvRotation) {
+        threeMapsChanged = true;
+      }
       const hasCustom = Boolean(spec.hasCustomAlbedo || spec.hasCustomNormal || spec.hasCustomRoughness);
       if (!hasCustom || (prev && prev.texturePreset !== spec.texturePreset)) {
         this.materialLayerMap.set(spec.id, PRESET_TO_LAYER[spec.texturePreset] ?? 0);
       }
     }
+    if (threeMapsChanged) this.textureManager.clearThreeMapsCache();
     this.materials = materials;
     if (this.currentProject) {
       syncThreeMaterials(

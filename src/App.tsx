@@ -223,7 +223,13 @@ export default function App() {
       emissiveIntensity: defaults.emissiveIntensity,
       texturePreset: defaults.texturePreset,
       uvScale: defaults.uvScale,
+      uvScaleX: defaults.uvScaleX ?? defaults.uvScale,
+      uvScaleY: defaults.uvScaleY ?? defaults.uvScale,
+      uvOffsetX: defaults.uvOffsetX ?? 0,
+      uvOffsetY: defaults.uvOffsetY ?? 0,
+      uvRotation: defaults.uvRotation ?? 0,
       normalStrength: defaults.normalStrength,
+      emissiveOpacity: defaults.emissiveOpacity ?? 1,
       // Uploaded texture images are user assets, so reset their active slots separately.
       hasCustomAlbedo: current.hasCustomAlbedo,
       hasCustomNormal: current.hasCustomNormal,
@@ -242,7 +248,13 @@ export default function App() {
       emissiveIntensity: preset.emissiveIntensity,
       texturePreset: preset.texturePreset,
       uvScale: preset.uvScale,
+      uvScaleX: preset.uvScale,
+      uvScaleY: preset.uvScale,
+      uvOffsetX: 0,
+      uvOffsetY: 0,
+      uvRotation: 0,
       normalStrength: preset.normalStrength,
+      emissiveOpacity: 1,
       hasCustomAlbedo: false,
       hasCustomNormal: false,
       hasCustomRoughness: false,
@@ -405,6 +417,7 @@ export default function App() {
         onResetMaterial={handleResetMaterial}
         onApplyMaterialPreset={handleApplyMaterialPreset}
         onUploadTextureClick={handleUploadTextureClick}
+        getTexturePreview={(materialId, slot) => engineRef.current?.getMaterialMapPreview(materialId, slot) ?? null}
         settings={settings}
         onUpdateSettings={handleUpdateSettings}
         onRestartTrace={() => engineRef.current?.restartAccumulation()}

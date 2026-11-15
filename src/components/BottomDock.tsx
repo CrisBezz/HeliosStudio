@@ -568,93 +568,93 @@ export const BottomDock: React.FC<BottomDockProps> = ({
                     value={activeMaterial.ior}
                     onChange={(v) => onUpdateMaterial(activeMaterial.id, { ior: v })}
                   />
+                  <SliderControl label="Emission" valueDisplay={activeMaterial.emissiveIntensity.toFixed(2)} min={0} max={6} step={0.05} value={activeMaterial.emissiveIntensity} onChange={(v) => onUpdateMaterial(activeMaterial.id, { emissiveIntensity: v })} />
+                  {activeMaterial.emissiveIntensity > 0.01 && (
+                    <SliderControl label="Emitter opacity" valueDisplay={`${Math.round((activeMaterial.emissiveOpacity ?? 1) * 100)}%`} min={0.05} max={1} step={0.01} value={activeMaterial.emissiveOpacity ?? 1} onChange={(v) => onUpdateMaterial(activeMaterial.id, { emissiveOpacity: v })} />
+                  )}
                 </div>
 
-                {/* PBR Texture Maps, Tiling & Normal Depth */}
-                <div className="space-y-2.5 pt-2 border-t border-white/[0.06]">
-                  <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                    <span className="text-[11px] text-[#9BA1A6] mr-1 shrink-0">PBR Texture:</span>
-                    {PBR_TEXTURE_PRESETS.map((tex) => {
-                      const hasCustom = Boolean(
-                        activeMaterial.hasCustomAlbedo ||
-                          activeMaterial.hasCustomNormal ||
-                          activeMaterial.hasCustomRoughness,
-                      );
-                      const active = !hasCustom && activeMaterial.texturePreset === tex.id;
-                      return (
+                {/* PBR maps, UV mapping and normal relief */}
+                <div className="space-y-3 pt-2 border-t border-white/[0.06]">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <span className="block text-[11px] font-medium text-[#C4C9D0]">Texture maps</span>
+                      <span className="text-[10px] text-[#858B94]">
+                        {PBR_TEXTURE_PRESETS.find((tex) => tex.id === activeMaterial.texturePreset)?.label ?? 'Custom'}
+                        {activeMaterial.hasCustomAlbedo || activeMaterial.hasCustomNormal || activeMaterial.hasCustomRoughness
+                          ? ' + uploaded maps'
+                          : ' · UV mapped'}
+                      </span>
+                    </div>
+                    <div className="flex gap-1.5">
+                      {(activeMaterial.hasCustomAlbedo || activeMaterial.hasCustomNormal || activeMaterial.hasCustomRoughness) && (
                         <button
-                          key={tex.id}
                           type="button"
-                          onClick={() =>
-                            onUpdateMaterial(activeMaterial.id, {
-                              texturePreset: tex.id,
-                              hasCustomAlbedo: false,
-                              hasCustomNormal: false,
-                              hasCustomRoughness: false,
-                              normalStrength:
-                                tex.id !== 'none' && activeMaterial.normalStrength < 0.05
-                                  ? 1.0
-                                  : activeMaterial.normalStrength,
-                            })
-                          }
-                          className={`min-h-[38px] px-3 rounded-lg border text-[11px] font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors ${
-                            active
-                              ? 'bg-[#1E222A] border-[#F59E0B] text-[#F4F4F6]'
-                              : 'bg-[#181B20] border-white/[0.08] text-[#9BA1A6] hover:text-[#F4F4F6]'
-                          }`}
+                          onClick={() => onUpdateMaterial(activeMaterial.id, {
+                            hasCustomAlbedo: false,
+                            hasCustomNormal: false,
+                            hasCustomRoughness: false,
+                          })}
+                          className="min-h-9 px-2.5 rounded-lg border border-white/[0.08] bg-[#181B20] text-[10px] text-[#C4C9D0] hover:text-white"
                         >
-                          {tex.label}
+                          Restore preset maps
                         </button>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => onUpdateMaterial(activeMaterial.id, {
+                          uvScaleX: activeMaterial.uvScale,
+                          uvScaleY: activeMaterial.uvScale,
+                          uvOffsetX: 0,
+                          uvOffsetY: 0,
+                          uvRotation: 0,
+                        })}
+                        className="min-h-9 px-2.5 rounded-lg border border-white/[0.08] bg-[#181B20] text-[10px] text-[#C4C9D0] hover:text-white"
+                      >
+                        Reset mapping
+                      </button>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    {([
+                      { slot: 'albedo', label: 'Albedo / Color', custom: activeMaterial.hasCustomAlbedo },
+                      { slot: 'normal', label: 'Normal', custom: activeMaterial.hasCustomNormal },
+                      { slot: 'roughness', label: 'Roughness', custom: activeMaterial.hasCustomRoughness },
+                    ] as { slot: TextureSlot; label: string; custom?: boolean }[]).map((item) => {
+                      const preview = getTexturePreview(activeMaterial.id, item.slot);
+                      return (
+                        <div key={item.slot} className="min-w-0 rounded-xl border border-white/[0.08] bg-[#181B20] p-2 flex items-center gap-2">
+                          <div className="w-14 h-14 rounded-lg overflow-hidden bg-[#0d0f12] border border-white/[0.08] shrink-0">
+                            {preview && <img src={preview} alt={item.label + ' texture preview'} className="w-full h-full object-cover" />}
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <span className="block text-[10px] text-[#C4C9D0] truncate">{item.label}</span>
+                            <span className="block text-[9px] text-[#858B94]">{item.custom ? 'Uploaded map' : 'Preset map'}</span>
+                            <button
+                              type="button"
+                              onClick={() => onUploadTextureClick(activeMaterial.id, item.slot)}
+                              className="mt-1 min-h-7 px-2 rounded-md border border-white/[0.08] text-[9px] text-[#C4C9D0] hover:border-[#F59E0B]/50 hover:text-white flex items-center gap-1"
+                            >
+                              <ImagePlus className="w-3 h-3" />
+                              Change
+                            </button>
+                          </div>
+                        </div>
                       );
                     })}
                   </div>
-
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-2 items-center">
-                    <SliderControl
-                      label="UV Tile Scale"
-                      valueDisplay={`${activeMaterial.uvScale.toFixed(1)}×`}
-                      min={0.5}
-                      max={6.0}
-                      step={0.1}
-                      value={activeMaterial.uvScale}
-                      onChange={(v) => onUpdateMaterial(activeMaterial.id, { uvScale: v })}
-                    />
-                    <SliderControl
-                      label="Normal Depth"
-                      valueDisplay={activeMaterial.normalStrength.toFixed(2)}
-                      min={0.0}
-                      max={2.0}
-                      step={0.05}
-                      value={activeMaterial.normalStrength}
-                      onChange={(v) => onUpdateMaterial(activeMaterial.id, { normalStrength: v })}
-                    />
-                    <div className="sm:col-span-2 flex items-center gap-1.5 overflow-x-auto no-scrollbar">
-                      <span className="text-[11px] text-[#9BA1A6] mr-1 shrink-0">Custom Maps:</span>
-                      {(
-                        [
-                          { slot: 'albedo', label: 'Albedo', active: activeMaterial.hasCustomAlbedo },
-                          { slot: 'normal', label: 'Normal', active: activeMaterial.hasCustomNormal },
-                          { slot: 'roughness', label: 'Roughness', active: activeMaterial.hasCustomRoughness },
-                        ] as { slot: TextureSlot; label: string; active?: boolean }[]
-                      ).map((item) => (
-                        <button
-                          key={item.slot}
-                          type="button"
-                          onClick={() => onUploadTextureClick(activeMaterial.id, item.slot)}
-                          className={`min-h-[40px] px-3 rounded-lg border text-[11px] font-medium flex items-center gap-1.5 whitespace-nowrap shrink-0 cursor-pointer transition-colors ${
-                            item.active
-                              ? 'bg-[#F59E0B]/15 border-[#F59E0B]/70 text-[#F59E0B]'
-                              : 'bg-[#181B20] hover:bg-[#22262E] border-white/[0.08] text-[#C4C9D0] hover:text-[#F4F4F6]'
-                          }`}
-                        >
-                          <ImagePlus className="w-3.5 h-3.5" />
-                          <span>{item.label}</span>
-                        </button>
-                      ))}
-                    </div>
+                    <SliderControl label="Scale U" valueDisplay={`${(activeMaterial.uvScaleX ?? activeMaterial.uvScale).toFixed(2)}×`} min={0.1} max={12} step={0.05} value={activeMaterial.uvScaleX ?? activeMaterial.uvScale} onChange={(v) => onUpdateMaterial(activeMaterial.id, { uvScaleX: v })} />
+                    <SliderControl label="Scale V" valueDisplay={`${(activeMaterial.uvScaleY ?? activeMaterial.uvScale).toFixed(2)}×`} min={0.1} max={12} step={0.05} value={activeMaterial.uvScaleY ?? activeMaterial.uvScale} onChange={(v) => onUpdateMaterial(activeMaterial.id, { uvScaleY: v })} />
+                    <SliderControl label="Offset U" valueDisplay={(activeMaterial.uvOffsetX ?? 0).toFixed(2)} min={-1} max={1} step={0.01} value={activeMaterial.uvOffsetX ?? 0} onChange={(v) => onUpdateMaterial(activeMaterial.id, { uvOffsetX: v })} />
+                    <SliderControl label="Offset V" valueDisplay={(activeMaterial.uvOffsetY ?? 0).toFixed(2)} min={-1} max={1} step={0.01} value={activeMaterial.uvOffsetY ?? 0} onChange={(v) => onUpdateMaterial(activeMaterial.id, { uvOffsetY: v })} />
+                    <SliderControl label="Rotation" valueDisplay={`${Math.round(activeMaterial.uvRotation ?? 0)}°`} min={-180} max={180} step={1} value={activeMaterial.uvRotation ?? 0} onChange={(v) => onUpdateMaterial(activeMaterial.id, { uvRotation: v })} />
+                    <SliderControl label="Normal / height relief" valueDisplay={activeMaterial.normalStrength.toFixed(2)} min={0} max={4} step={0.05} value={activeMaterial.normalStrength} onChange={(v) => onUpdateMaterial(activeMaterial.id, { normalStrength: v })} />
                   </div>
+                  <p className="text-[10px] leading-relaxed text-[#858B94]">
+                    Height detail is currently carried by the normal map; it affects shading, not the mesh silhouette.
+                  </p>
                 </div>
-
               </div>
             )}
 
