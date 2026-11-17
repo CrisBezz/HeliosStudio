@@ -1,3 +1,5 @@
+> Priority order superseded by the [unified B / H / UV progression](https://github.com/CrisBezz/BoxLab/blob/main/docs/UV_AUDIT_AND_ORDERED_BUILDS_2026-11-17.md). UV creation and painting are now higher priorities; H1 texture safety remains the next standalone Helios recommendation.
+
 # Helios Studio next-build audit — 17 November 2026
 
 The detailed coordinated audit covers both repositories, current release evidence, confirmed findings, per-build scope and exit criteria:
