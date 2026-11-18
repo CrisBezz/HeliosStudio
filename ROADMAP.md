@@ -1,3 +1,7 @@
+## 18 November 2026 — H1 / Helios Studio 0.1.5 user PASS
+
+Cris confirms PASS /nextbuild. Protect explicit eight-slot allocation/free reuse/overflow, failed upload/import rollback and independent material textures from .1.5. Next ordered build B1 ports safety to BoxLab with existing packed-metalness/opacity behavior retained; standalone runtime stays0.1.5. No new standalone runtime build or unchanged-code retest is implied.
+
 ## 18 November 2026 — H1 / Helios Studio 0.1.5: custom texture-slot safety
 
 BoxLab .1189 UV1 is user PASS, protected. H1 is standalone only; B1 remains the separate BoxLab vendor port, surface-opacity Reset and browser-workflow build. Do not describe BoxLab as receiving this allocator repair yet. Standalone release0.1.5 keeps the existing renderer, presets, mapping and eight1024 custom layers.
