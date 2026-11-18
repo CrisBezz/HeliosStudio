@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 import { TransformControls } from 'three/addons/controls/TransformControls.js';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { buildSceneBVH, BVHBuildResult } from './bvh';
-import { buildBuiltinProject, BuiltProject, importModelFromFile, syncThreeMaterials } from './models';
+import { buildBuiltinProject, BuiltProject, importModelFromFile, disposeProjectMeshes, syncThreeMaterials } from './models';
 import { GPUPathTracer } from './pathTracer';
 import { CUSTOM_LAYER_OFFSET, PbrTextureManager, PRESET_TO_LAYER } from './textures';
 import { analyzeGeometriesUV } from './uvCleanup';
@@ -44,7 +44,8 @@ export class StudioEngine {
   private transformControls: TransformControls;
   private transformHelper: THREE.Object3D;
   private textureManager: PbrTextureManager;
-  private readonly pendingTextureUploads = new Map<string, number>();
+  private readonly pendingTextureUploads = new Map<string, { layer: number }>();
+  private importRequest?: object;
   private materialLayerMap = new Map<string, number>();
   private pathTracer: GPUPathTracer;
   private raycaster = new THREE.Raycaster();
@@ -529,6 +530,10 @@ export class StudioEngine {
     this.scene.environmentIntensity = intensity;
   }
 
+  public getProjectIdentity() {
+    return this.currentProject;
+  }
+
   public getMaterials(): MaterialSpec[] {
     return this.materials;
   }
@@ -542,6 +547,7 @@ export class StudioEngine {
   }
 
   public loadBuiltinProject(id: BuiltinProjectId): MaterialSpec[] {
+    this.importRequest = undefined;
     this.pendingTextureUploads.clear();
     this.textureManager.resetCustomCounter();
     this.materialLayerMap.clear();
@@ -554,15 +560,28 @@ export class StudioEngine {
   }
 
   public async loadCustomFile(file: File): Promise<MaterialSpec[]> {
-    const textureManager = new PbrTextureManager(this.renderer.capabilities.getMaxAnisotropy());
+    if (this.disposed) throw new Error('Import cancelled: studio closed.');
+    const request = {};
+    this.importRequest = request;
+    const isCurrent = () => !this.disposed && this.importRequest === request;
     const layerMap = new Map<string, number>();
+    let textureManager: PbrTextureManager | undefined;
     let built: BuiltProject;
     try {
-      built = await importModelFromFile(file, this.isSoftwareGl, textureManager, layerMap);
-      if (this.disposed) throw new Error('Import cancelled: studio closed.');
+      built = await importModelFromFile(file, this.isSoftwareGl, undefined, layerMap, {
+        isCurrent,
+        getTextureManager: () => textureManager = new PbrTextureManager(this.renderer.capabilities.getMaxAnisotropy()),
+      });
+      if (!isCurrent() || !textureManager) {
+        disposeProjectMeshes(built.group);
+        throw new DOMException('Import cancelled: project selection changed.', 'AbortError');
+      }
     } catch (error) {
-      textureManager.dispose();
+      textureManager?.dispose();
+      if (!isCurrent()) throw new DOMException('Import cancelled: project selection changed.', 'AbortError');
       throw error;
+    } finally {
+      if (this.importRequest === request) this.importRequest = undefined;
     }
     const previousManager = this.textureManager;
     this.textureManager = textureManager;
@@ -574,18 +593,7 @@ export class StudioEngine {
   }
 
   private installBuiltProject(built: BuiltProject) {
-    // Dispose old geometry/materials cleanly
-    this.projectRoot.traverse((obj) => {
-      const m = obj as THREE.Mesh;
-      if (m.isMesh) {
-        m.geometry?.dispose();
-        if (Array.isArray(m.material)) {
-          m.material.forEach((mat) => mat.dispose());
-        } else {
-          m.material?.dispose();
-        }
-      }
-    });
+    disposeProjectMeshes(this.projectRoot);
     this.projectRoot.clear();
 
     this.currentProject = built;
@@ -613,6 +621,15 @@ export class StudioEngine {
     this.requestDraw();
   }
 
+  public cancelMaterialTextureUpload(id: string) {
+    const pending = this.pendingTextureUploads.get(id);
+    if (!pending) return;
+    this.pendingTextureUploads.delete(id);
+    if (this.materialLayerMap.get(id) !== pending.layer) {
+      this.textureManager.releaseCustomLayer(pending.layer);
+    }
+  }
+
   public updateMaterials(materials: MaterialSpec[]) {
     const retainedIds = new Set(materials.map((material) => material.id));
     for (const [id, layer] of this.materialLayerMap) {
@@ -621,8 +638,8 @@ export class StudioEngine {
         this.materialLayerMap.delete(id);
       }
     }
-    for (const [id, layer] of this.pendingTextureUploads) {
-      if (!retainedIds.has(id)) this.textureManager.releaseCustomLayer(layer);
+    for (const id of this.pendingTextureUploads.keys()) {
+      if (!retainedIds.has(id)) this.cancelMaterialTextureUpload(id);
     }
     let threeMapsChanged = false;
     for (const spec of materials) {
@@ -641,8 +658,9 @@ export class StudioEngine {
       if (!hasCustom || (prev && prev.texturePreset !== spec.texturePreset)) {
         const layer = this.materialLayerMap.get(spec.id);
         if (layer !== undefined) this.textureManager.releaseCustomLayer(layer);
-        const pending = this.pendingTextureUploads.get(spec.id);
-        if (pending !== undefined) this.textureManager.releaseCustomLayer(pending);
+        if (prev?.texturePreset !== spec.texturePreset || prev?.hasCustomAlbedo || prev?.hasCustomNormal || prev?.hasCustomRoughness) {
+          this.cancelMaterialTextureUpload(spec.id);
+        }
         this.materialLayerMap.set(spec.id, PRESET_TO_LAYER[spec.texturePreset] ?? 0);
       }
     }
@@ -678,18 +696,22 @@ export class StudioEngine {
     let layer = this.materialLayerMap.get(materialId) ?? 0;
     const newlyAllocated = layer < CUSTOM_LAYER_OFFSET;
     if (newlyAllocated) layer = manager.allocateCustomLayer(spec.texturePreset, Boolean(uvInfo?.isAtlas));
-    this.pendingTextureUploads.set(materialId, layer);
+    const request = { layer };
+    this.pendingTextureUploads.set(materialId, request);
+    const isCurrent = () => !this.disposed && this.textureManager === manager
+      && this.pendingTextureUploads.get(materialId) === request;
     try {
-      await manager.writeFileToLayer(layer, slot, file, uvInfo);
-      if (this.disposed || this.textureManager !== manager || !this.materials.some((m) => m.id === materialId)) {
-        throw new Error('Texture upload cancelled: scene changed.');
+      await manager.writeFileToLayer(layer, slot, file, uvInfo, isCurrent);
+      if (!isCurrent()) {
+        throw new DOMException('Texture upload cancelled.', 'AbortError');
       }
       this.materialLayerMap.set(materialId, layer);
     } catch (error) {
+      if (!isCurrent()) throw new DOMException('Texture upload cancelled.', 'AbortError');
       if (newlyAllocated) manager.releaseCustomLayer(layer);
       throw error;
     } finally {
-      if (this.textureManager === manager) this.pendingTextureUploads.delete(materialId);
+      if (isCurrent()) this.pendingTextureUploads.delete(materialId);
     }
     this.pathTracer.setTextureArrays(this.textureManager);
 
@@ -697,7 +719,7 @@ export class StudioEngine {
     if (slot === 'albedo') patch.hasCustomAlbedo = true;
     if (slot === 'normal') {
       patch.hasCustomNormal = true;
-      if (spec && spec.normalStrength < 0.05) {
+      if ((this.materials.find((material) => material.id === materialId)?.normalStrength ?? 1) < 0.05) {
         patch.normalStrength = 1.0;
       }
     }
@@ -1002,6 +1024,8 @@ export class StudioEngine {
 
   public dispose() {
     this.disposed = true;
+    this.importRequest = undefined;
+    this.pendingTextureUploads.clear();
     cancelAnimationFrame(this.frameId);
     window.clearTimeout(this.frameId);
     window.clearTimeout(this.interactionCooldownTimer);
