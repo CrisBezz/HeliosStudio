@@ -29,7 +29,13 @@ export default function App() {
   const engineRef = useRef<StudioEngine | null>(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const textureInputRef = useRef<HTMLInputElement | null>(null);
-  const pendingTexUploadRef = useRef<{ materialId: string; slot: TextureSlot } | null>(null);
+  const importRequestRef = useRef<object | null>(null);
+  const pendingTexUploadRef = useRef<{
+    materialId: string;
+    slot: TextureSlot;
+    engine: StudioEngine;
+    project: ReturnType<StudioEngine['getProjectIdentity']>;
+  } | null>(null);
   const materialDefaultsRef = useRef<Map<string, MaterialSpec>>(new Map());
 
   const [renderMode, setRenderMode] = useState<RenderMode>('raytrace');
@@ -141,6 +147,8 @@ export default function App() {
 
   const handleSelectProject = (id: BuiltinProjectId) => {
     if (!engineRef.current) return;
+    importRequestRef.current = null;
+    pendingTexUploadRef.current = null;
     const mats = engineRef.current.loadBuiltinProject(id);
     setActiveProjectId(id);
     setCustomProjectName(null);
@@ -151,9 +159,15 @@ export default function App() {
   };
 
   const handleImportFile = async (file: File) => {
-    if (!engineRef.current) return;
+    const engine = engineRef.current;
+    if (!engine) return;
+    const request = {};
+    importRequestRef.current = request;
+    const isCurrent = () => engineRef.current === engine && importRequestRef.current === request;
     try {
-      const mats = await engineRef.current.loadCustomFile(file);
+      const mats = await engine.loadCustomFile(file);
+      if (!isCurrent()) return;
+      pendingTexUploadRef.current = null;
       setActiveProjectId('custom');
       setCustomProjectName(file.name);
       setMaterials(mats);
@@ -162,7 +176,9 @@ export default function App() {
       setSelectedPartName(null);
       showNotice(`Loaded ${file.name}`);
     } catch (err) {
-      showNotice(err instanceof Error ? err.message : 'Unable to load 3D model file.');
+      if (isCurrent()) showNotice(err instanceof Error ? err.message : 'Unable to load 3D model file.');
+    } finally {
+      if (isCurrent()) importRequestRef.current = null;
     }
   };
 
@@ -201,11 +217,15 @@ export default function App() {
   };
 
   const handleUpdateMaterial = (id: string, patch: Partial<MaterialSpec>) => {
-    setMaterials((prev) => {
-      const next = prev.map((m) => (m.id === id ? { ...m, ...patch } : m));
-      engineRef.current?.updateMaterials(next);
-      return next;
-    });
+    const engine = engineRef.current;
+    if (!engine) return;
+    if (patch.hasCustomAlbedo === false && patch.hasCustomNormal === false && patch.hasCustomRoughness === false) {
+      engine.cancelMaterialTextureUpload(id);
+      if (pendingTexUploadRef.current?.materialId === id) pendingTexUploadRef.current = null;
+    }
+    const next = engine.getMaterials().map((m) => (m.id === id ? { ...m, ...patch } : m));
+    engine.updateMaterials(next);
+    setMaterials(next);
   };
 
   const handleResetMaterial = (id: string) => {
@@ -262,28 +282,34 @@ export default function App() {
   };
 
   const handleUploadTextureClick = (materialId: string, slot: TextureSlot) => {
-    pendingTexUploadRef.current = { materialId, slot };
+    const engine = engineRef.current;
+    if (!engine) return;
+    pendingTexUploadRef.current = { materialId, slot, engine, project: engine.getProjectIdentity() };
     textureInputRef.current?.click();
   };
 
   const handleTextureFileSelected = async (file: File) => {
     const target = pendingTexUploadRef.current;
     pendingTexUploadRef.current = null;
-    if (!target || !engineRef.current) return;
+    if (!target) return;
+    const { engine, project } = target;
+    const isCurrent = () => engineRef.current === engine && engine.getProjectIdentity() === project;
+    if (!isCurrent()) return;
     try {
-      const patch = await engineRef.current.uploadMaterialTexture(
+      await engine.uploadMaterialTexture(
         target.materialId,
         target.slot,
         file,
       );
-      setMaterials((prev) =>
-        prev.map((m) => (m.id === target.materialId ? { ...m, ...patch } : m)),
-      );
+      if (!isCurrent()) return;
+      setMaterials(engine.getMaterials());
       const slotLabel =
         target.slot === 'albedo' ? 'Albedo' : target.slot === 'normal' ? 'Normal' : 'Roughness';
       showNotice(`Loaded ${slotLabel} map (${file.name})`);
     } catch (err) {
-      showNotice(err instanceof Error ? err.message : 'Unable to load texture image.');
+      if (isCurrent() && !(err instanceof DOMException && err.name === 'AbortError')) {
+        showNotice(err instanceof Error ? err.message : 'Unable to load texture image.');
+      }
     }
   };
 
