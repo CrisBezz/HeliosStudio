@@ -651,6 +651,7 @@ export class PbrTextureManager {
     slot: TextureSlot,
     file: File,
     uvInfo?: GeometryUVInfo,
+    isCurrent = () => true,
   ): Promise<void> {
     const lease = this.customLeases.get(encodedLayer);
     if (this.disposed || !lease) throw new Error('Texture layer is no longer reserved.');
@@ -662,7 +663,7 @@ export class PbrTextureManager {
         el.onerror = () => reject(new Error(`Unable to decode image ${file.name}`));
         el.src = url;
       });
-      if (this.disposed || this.customLeases.get(encodedLayer) !== lease) {
+      if (this.disposed || !isCurrent() || this.customLeases.get(encodedLayer) !== lease) {
         throw new Error('Texture upload was cancelled; its layer has been released.');
       }
       this.writeImageToLayer(encodedLayer, slot, img, false, uvInfo);
