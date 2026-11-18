@@ -75,3 +75,8 @@ DEVICE015: upload distinct maps to several materials, replace Normal/Roughness o
 
 Standalone runtime cb4e68d04f3837f12266468e3cca59450ae9081a published to main. All11 changed files byte-match validated local source. Local7/7 behavior tests PASS (23.672s), type-check/build/diff PASS. Hosted Pages44235671140 build134571085734 and deploy134571260760 SUCCESS: frozen Bun install, seven behavior tests, type-check, production build and Pages deploy all pass. Live shell references assets/index-DjT0GQQw.js; fetched1,093,733-byte production bundle contains the new capacity, lease-cancellation, per-material pending and scene/dispose guards. Physical iPad acceptance pending. BoxLab remains .1189 UV1 PASS; B1 port is next, not included in this runtime.
 
+
+## 18 November 2026 — H1 / Helios Studio 0.1.5 user PASS
+
+Cris confirms PASS /nextbuild. Protect explicit eight-slot allocation/free reuse/overflow, failed upload/import rollback and independent material textures from .1.5. Next ordered build B1 ports safety to BoxLab with existing packed-metalness/opacity behavior retained; standalone runtime stays0.1.5. No new standalone runtime build or unchanged-code retest is implied.
+
