@@ -952,14 +952,31 @@ export function buildBuiltinProject(id: BuiltinProjectId, isSoftwareGl: boolean)
   }
 }
 
+export function disposeProjectMeshes(root: THREE.Object3D) {
+  const geometries = new Set<THREE.BufferGeometry>();
+  const materials = new Set<THREE.Material>();
+  root.traverse(node => {
+    const mesh = node as THREE.Mesh;
+    if (!mesh.isMesh) return;
+    if (mesh.geometry) geometries.add(mesh.geometry);
+    for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
+      if (material) materials.add(material);
+    }
+  });
+  for (const geometry of geometries) geometry.dispose();
+  for (const material of materials) material.dispose();
+}
+
 export async function importModelFromFile(
   file: File,
   isSoftwareGl: boolean,
   textureManager?: PbrTextureManager,
   materialLayerMap?: Map<string, number>,
+  lifetime?: { isCurrent: () => boolean; getTextureManager: () => PbrTextureManager },
 ): Promise<BuiltProject> {
   const ext = file.name.split('.').pop()?.toLowerCase() ?? '';
   const buffer = await file.arrayBuffer();
+  if (lifetime && !lifetime.isCurrent()) throw new DOMException('Import cancelled: project selection changed.', 'AbortError');
 
   let loadedRoot: THREE.Group;
 
@@ -984,10 +1001,16 @@ export async function importModelFromFile(
     throw new Error(`Unsupported format ".${ext}". Please import GLB, GLTF, OBJ, or STL.`);
   }
 
+  if (lifetime && !lifetime.isCurrent()) {
+    disposeProjectMeshes(loadedRoot);
+    throw new Error('Import cancelled: project selection changed.');
+  }
+
   // Normalize bounding box to fit studio stage (~1.45m max dimension, grounded at y=0)
   loadedRoot.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(loadedRoot);
   if (box.isEmpty()) {
+    disposeProjectMeshes(loadedRoot);
     throw new Error('The imported file contains no renderable 3D geometry.');
   }
 
@@ -1102,10 +1125,18 @@ export async function importModelFromFile(
   });
 
   if (materials.length === 0) {
+    disposeProjectMeshes(wrapper);
     throw new Error('No mesh triangles found in the imported file.');
   }
 
   // Analyze complete per-material UVs, feather 3D seams, and dilate atlas borders into high-res layers
+  try {
+    textureManager ??= lifetime?.getTextureManager();
+  } catch (error) {
+    disposeProjectMeshes(wrapper);
+    throw error;
+  }
+
   if (textureManager && materialLayerMap) {
     const reserved: number[] = [];
     const staged = new Map<string, number>();
@@ -1157,12 +1188,7 @@ export async function importModelFromFile(
       for (const [id, layer] of staged) materialLayerMap.set(id, layer);
     } catch (error) {
       for (const layer of reserved) textureManager.releaseCustomLayer(layer);
-      wrapper.traverse((node) => {
-        const mesh = node as THREE.Mesh;
-        if (!mesh.isMesh) return;
-        mesh.geometry?.dispose();
-        for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) material?.dispose();
-      });
+      disposeProjectMeshes(wrapper);
       throw error;
     }
   }
