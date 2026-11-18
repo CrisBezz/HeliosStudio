@@ -44,6 +44,7 @@ export class StudioEngine {
   private transformControls: TransformControls;
   private transformHelper: THREE.Object3D;
   private textureManager: PbrTextureManager;
+  private readonly pendingTextureUploads = new Map<string, number>();
   private materialLayerMap = new Map<string, number>();
   private pathTracer: GPUPathTracer;
   private raycaster = new THREE.Raycaster();
@@ -541,6 +542,7 @@ export class StudioEngine {
   }
 
   public loadBuiltinProject(id: BuiltinProjectId): MaterialSpec[] {
+    this.pendingTextureUploads.clear();
     this.textureManager.resetCustomCounter();
     this.materialLayerMap.clear();
     const built = buildBuiltinProject(id, this.isSoftwareGl);
@@ -552,15 +554,22 @@ export class StudioEngine {
   }
 
   public async loadCustomFile(file: File): Promise<MaterialSpec[]> {
-    this.textureManager.resetCustomCounter();
-    this.materialLayerMap.clear();
-    const built = await importModelFromFile(
-      file,
-      this.isSoftwareGl,
-      this.textureManager,
-      this.materialLayerMap,
-    );
+    const textureManager = new PbrTextureManager(this.renderer.capabilities.getMaxAnisotropy());
+    const layerMap = new Map<string, number>();
+    let built: BuiltProject;
+    try {
+      built = await importModelFromFile(file, this.isSoftwareGl, textureManager, layerMap);
+      if (this.disposed) throw new Error('Import cancelled: studio closed.');
+    } catch (error) {
+      textureManager.dispose();
+      throw error;
+    }
+    const previousManager = this.textureManager;
+    this.textureManager = textureManager;
+    this.materialLayerMap = layerMap;
+    this.pendingTextureUploads.clear();
     this.installBuiltProject(built);
+    previousManager.dispose();
     return built.materials;
   }
 
@@ -605,6 +614,16 @@ export class StudioEngine {
   }
 
   public updateMaterials(materials: MaterialSpec[]) {
+    const retainedIds = new Set(materials.map((material) => material.id));
+    for (const [id, layer] of this.materialLayerMap) {
+      if (!retainedIds.has(id)) {
+        this.textureManager.releaseCustomLayer(layer);
+        this.materialLayerMap.delete(id);
+      }
+    }
+    for (const [id, layer] of this.pendingTextureUploads) {
+      if (!retainedIds.has(id)) this.textureManager.releaseCustomLayer(layer);
+    }
     let threeMapsChanged = false;
     for (const spec of materials) {
       const prev = this.materials.find((m) => m.id === spec.id);
@@ -620,6 +639,10 @@ export class StudioEngine {
       }
       const hasCustom = Boolean(spec.hasCustomAlbedo || spec.hasCustomNormal || spec.hasCustomRoughness);
       if (!hasCustom || (prev && prev.texturePreset !== spec.texturePreset)) {
+        const layer = this.materialLayerMap.get(spec.id);
+        if (layer !== undefined) this.textureManager.releaseCustomLayer(layer);
+        const pending = this.pendingTextureUploads.get(spec.id);
+        if (pending !== undefined) this.textureManager.releaseCustomLayer(pending);
         this.materialLayerMap.set(spec.id, PRESET_TO_LAYER[spec.texturePreset] ?? 0);
       }
     }
@@ -649,15 +672,25 @@ export class StudioEngine {
       this.currentProject?.meshMap.get(materialId)?.map((m) => m.geometry as THREE.BufferGeometry) ?? [];
     const uvInfo = geoms.length > 0 ? analyzeGeometriesUV(geoms) : undefined;
 
+    if (!spec || this.disposed) throw new Error('Material is no longer available.');
+    if (this.pendingTextureUploads.has(materialId)) throw new Error('Wait for this material texture upload to finish.');
+    const manager = this.textureManager;
     let layer = this.materialLayerMap.get(materialId) ?? 0;
-    if (layer < CUSTOM_LAYER_OFFSET) {
-      layer = this.textureManager.allocateCustomLayer(
-        spec?.texturePreset ?? 'none',
-        Boolean(uvInfo?.isAtlas),
-      );
+    const newlyAllocated = layer < CUSTOM_LAYER_OFFSET;
+    if (newlyAllocated) layer = manager.allocateCustomLayer(spec.texturePreset, Boolean(uvInfo?.isAtlas));
+    this.pendingTextureUploads.set(materialId, layer);
+    try {
+      await manager.writeFileToLayer(layer, slot, file, uvInfo);
+      if (this.disposed || this.textureManager !== manager || !this.materials.some((m) => m.id === materialId)) {
+        throw new Error('Texture upload cancelled: scene changed.');
+      }
       this.materialLayerMap.set(materialId, layer);
+    } catch (error) {
+      if (newlyAllocated) manager.releaseCustomLayer(layer);
+      throw error;
+    } finally {
+      if (this.textureManager === manager) this.pendingTextureUploads.delete(materialId);
     }
-    await this.textureManager.writeFileToLayer(layer, slot, file, uvInfo);
     this.pathTracer.setTextureArrays(this.textureManager);
 
     const patch: Partial<MaterialSpec> = {};
