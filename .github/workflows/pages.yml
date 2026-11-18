@@ -24,6 +24,8 @@ jobs:
         uses: oven-sh/setup-bun@v2
       - name: Install locked dependencies
         run: bun install --frozen-lockfile
+      - name: Texture ownership regression tests
+        run: bun run test
       - name: Type-check
         run: bun run lint
       - name: Build for the HeliosStudio Pages path
