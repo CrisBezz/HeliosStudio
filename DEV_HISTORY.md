@@ -70,3 +70,8 @@ New executable tests exercise actual TypeScript production owners with Three.js,
 
 DEVICE015: upload distinct maps to several materials, replace Normal/Roughness on one and confirm others stay unchanged; Restore preset maps then upload elsewhere; try invalid/over-capacity import and verify existing scene remains. Synthetic eight-slot/rollback cases are automated; no need to manually manufacture nine materials. Next ordered build B1 port tested safety to BoxLab, then UV2 guided Facegroups; H2 request ordering remains queued.
 
+
+## H1 / 0.1.5 publication verified — 18 November 2026
+
+Standalone runtime cb4e68d04f3837f12266468e3cca59450ae9081a published to main. All11 changed files byte-match validated local source. Local7/7 behavior tests PASS (23.672s), type-check/build/diff PASS. Hosted Pages44235671140 build134571085734 and deploy134571260760 SUCCESS: frozen Bun install, seven behavior tests, type-check, production build and Pages deploy all pass. Live shell references assets/index-DjT0GQQw.js; fetched1,093,733-byte production bundle contains the new capacity, lease-cancellation, per-material pending and scene/dispose guards. Physical iPad acceptance pending. BoxLab remains .1189 UV1 PASS; B1 port is next, not included in this runtime.
+
