@@ -1,3 +1,7 @@
+## 18 November 2026 — Helios Studio 0.1.6 user PASS
+
+Cris confirms PASS. Protect H2 latest-project import ownership, failed import isolation, and stale map decode cancellation during Restore or project replacement. Pages run 44274786054 succeeded and the live 0.1.6 marker was verified. BoxLab UV3 is next.
+
 ## 18 November 2026 — H2 / Helios Studio 0.1.6
 
 BoxLab .1192 Guided Unwrap is user PASS and protected. Helios uses latest-project-request ownership for file imports and built-in project choices. Obsolete file reads and parsed roots cannot publish. Staging texture managers are allocated after successful current parsing. Failed imports preserve the previous scene. Texture upload tokens guard the decode write, lease cleanup and subsequent material update. Restore, preset changes, material removal, project replacement and disposal invalidate stale uploads. The file picker is bound to the current engine and project. Same-material concurrent uploads retain the H1 wait behavior. UV3 is next for BoxLab.
