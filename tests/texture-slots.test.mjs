@@ -48,3 +48,52 @@ test('import image-write failure releases every reservation and publishes no par
 test('material removal releases its custom slot without touching another material',async()=>{
  const m=new PbrTextureManager(1),e=engine(m);try{e.materials.push({id:'b',texturePreset:'none',normalStrength:1});m.writeFileToLayer=async()=>{};await e.uploadMaterialTexture('a','albedo',{});await e.uploadMaterialTexture('b','albedo',{});m.customAlbedoBytes[1024*1024*4]=83;e.updateMaterials([e.materials[1]]);assert.deepEqual([...m.customLeases.keys()],[101]);assert.equal(m.customAlbedoBytes[1024*1024*4],83);assert.equal(m.allocateCustomLayer(),100);}finally{m.dispose();}
 });
+
+test('latest project wins against delayed file reads, including failed newer selections',async()=>{
+ const manager=new PbrTextureManager(1),e=engine(manager);
+ const installed=[];
+ e.installBuiltProject=built=>{installed.push(built);e.currentProject=built;e.materials=built.materials;};
+ try{
+  globalThis.fixtureScene=()=>scene(1);
+  let finishRead;
+  const slow={...file,arrayBuffer:()=>new Promise(resolve=>{finishRead=resolve;})};
+  const earlier=e.loadCustomFile(slow);
+  await e.loadCustomFile(file);
+  finishRead(new ArrayBuffer(0));
+  await assert.rejects(earlier,{name:'AbortError'});
+  assert.equal(installed.length,1);
+  const saved=e.currentProject;
+  const obsolete=e.loadCustomFile(slow);
+  await assert.rejects(e.loadCustomFile({...file,name:'broken.txt'}),/Unsupported format/);
+  finishRead(new ArrayBuffer(0));
+  await assert.rejects(obsolete,{name:'AbortError'});
+  assert.equal(e.currentProject,saved);
+  const cancelled=e.loadCustomFile(slow);
+  e.loadBuiltinProject('sculpture');
+  finishRead(new ArrayBuffer(0));
+  await assert.rejects(cancelled,{name:'AbortError'});
+  assert.equal(installed.length,2);
+ }finally{e.textureManager.dispose();}
+});
+
+test('cancelled decode cannot clear a replacement request or its reused layer',async()=>{
+ const manager=new PbrTextureManager(1),e=engine(manager),images=[];
+ const oldURL=globalThis.URL,oldImage=globalThis.Image;
+ globalThis.URL={createObjectURL(){return 'blob:fixture';},revokeObjectURL(){}};
+ globalThis.Image=class{constructor(){images.push(this);}set src(value){}};
+ try{
+  const slow=e.uploadMaterialTexture('a','albedo',{name:'old.png'});
+  e.updateMaterials([{...e.materials[0],roughness:.2}]);
+  assert.equal(e.pendingTextureUploads.size,1);
+  e.cancelMaterialTextureUpload('a');
+  const latest=e.uploadMaterialTexture('a','albedo',{name:'new.png'});
+  images[0].onload();
+  await assert.rejects(slow,{name:'AbortError'});
+  assert.equal(manager.customLeases.size,1);
+  assert.equal(e.pendingTextureUploads.size,1);
+  images[1].onload();
+  await latest;
+  assert.equal(e.materialLayerMap.get('a'),100);
+  assert.equal(e.materials[0].hasCustomAlbedo,true);
+ }finally{globalThis.URL=oldURL;globalThis.Image=oldImage;manager.dispose();}
+});
